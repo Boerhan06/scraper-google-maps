@@ -76,10 +76,9 @@ def get_top_reviews(page) -> str:
 
 # --- STATUS / LOGGER UNTUK STREAMLIT ---
 class UIStatus:
-    def __init__(self, log_placeholder, leads_placeholder, wa_placeholder):
+    def __init__(self, log_placeholder, leads_placeholder):
         self.log_placeholder = log_placeholder
         self.leads_placeholder = leads_placeholder
-        self.wa_placeholder = wa_placeholder
         self.logs = []
         self.total_leads = 0
         self.total_wa = 0
@@ -87,40 +86,31 @@ class UIStatus:
     def update_leads(self, count):
         self.total_leads = count
         self.leads_placeholder.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-top-row">
-                <div class="kpi-icon-badge">📁</div>
-                <span class="kpi-badge-green">Live Scraped</span>
+        <div class="extracted-leads-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                <div style="font-size: 0.8rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px;">Extracted Leads</div>
+                <div style="background-color: #1E1F38; color: #818CF8; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">💼</div>
             </div>
-            <div class="kpi-label-text">Total Tempat Ditemukan</div>
-            <div class="kpi-value-text">{self.total_leads}</div>
+            <div style="font-size: 3.5rem; font-weight: 800; color: #FFFFFF; line-height: 1; margin-bottom: 8px;">{self.total_leads}</div>
+            <div style="font-size: 0.8rem; font-weight: 600; color: #6366F1;">Total businesses found</div>
         </div>
         """, unsafe_allow_html=True)
         
     def update_wa(self, count):
         self.total_wa = count
-        self.wa_placeholder.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-top-row">
-                <div class="kpi-icon-badge">📞</div>
-                <span class="kpi-badge-green">Live Active</span>
-            </div>
-            <div class="kpi-label-text">Nomor WA Didapat</div>
-            <div class="kpi-value-text">{self.total_wa}</div>
-        </div>
-        """, unsafe_allow_html=True)
+        self.info(f"WhatsApp numbers parsed: {count}")
         
     def info(self, msg: str):
-        self.logs.append(f"ℹ️ {msg}")
-        self.log_placeholder.code("\n".join(self.logs[-15:]))
+        self.logs.append(f"[INFO] {msg}")
+        self.log_placeholder.code("\n".join(self.logs[-12:]))
         
     def success(self, msg: str):
-        self.logs.append(f"✅ {msg}")
-        self.log_placeholder.code("\n".join(self.logs[-15:]))
+        self.logs.append(f"[SUCCESS] {msg}")
+        self.log_placeholder.code("\n".join(self.logs[-12:]))
         
     def error(self, msg: str):
-        self.logs.append(f"❌ {msg}")
-        self.log_placeholder.code("\n".join(self.logs[-15:]))
+        self.logs.append(f"[ERROR] {msg}")
+        self.log_placeholder.code("\n".join(self.logs[-12:]))
 
 
 # --- UTILITIES ---
@@ -497,7 +487,7 @@ st.set_page_config(
 st.markdown("""
 <style>
 /* ── Font ── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
 /* ── Hide default Streamlit developer chrome, keep sidebar toggle ── */
@@ -510,314 +500,44 @@ header[data-testid="stHeader"] {
 
 /* ── Background Main Page ── */
 .stApp {
-    background-color: #F8F9FA !important;
+    background-color: #05050A !important;
+}
+
+/* ── Pull page content up by reducing top gap ── */
+.block-container {
+    padding-top: 1.5rem !important;
+    padding-bottom: 2rem !important;
+    max-width: 95% !important;
 }
 
 /* ── Streamlit Container Card Override ── */
 div[data-testid="stVerticalBlockBorderWrapper"] {
-    background-color: #FFFFFF !important;
-    border: 1px solid #E5E7EB !important;
-    border-radius: 12px !important;
-    padding: 24px !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+    background-color: #0B0C16 !important;
+    border: 1px solid #1A1C30 !important;
+    border-radius: 20px !important;
+    padding: 32px !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease !important;
+}
+div[data-testid="stVerticalBlockBorderWrapper"]:hover {
+    border-color: #6366F1 !important;
+    transform: translateY(-4px) scale(1.005);
+    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.25), 0 0 30px rgba(99, 102, 241, 0.1) !important;
 }
 
 /* ── Sidebar overrides ── */
 [data-testid="stSidebar"] {
-    background-color: #FFFFFF !important;
-    border-right: 1px solid #E5E7EB !important;
+    background-color: #080812 !important;
+    border-right: 1px solid #161726 !important;
 }
-
-/* Brand styling in sidebar */
-.brand-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 32px;
-    padding: 0 8px;
-}
-.brand-logo {
-    background-color: #CC0000;
-    color: #FFFFFF;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 700;
-}
-.brand-name {
-    font-weight: 700;
-    color: #0F172A;
-    font-size: 1.1rem;
-    line-height: 1.15;
-}
-.brand-sub {
-    font-size: 0.65rem;
-    color: #94A3B8;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Sidebar navigation */
-.sidebar-nav {
-    margin-bottom: 32px;
-    padding: 0 8px;
-}
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 16px;
-    border-radius: 8px;
-    color: #64748B;
-    font-size: 0.85rem;
+[data-testid="stSidebar"] label {
+    color: #E2E8F0 !important;
     font-weight: 500;
-    margin-bottom: 4px;
-    transition: all 0.2s ease;
 }
-.nav-item:hover {
-    background-color: #F8F9FA;
-    color: #0F172A;
-}
-.nav-item.active {
-    background-color: #FEF2F2;
-    color: #CC0000;
-    font-weight: 600;
-    border-left: 3px solid #CC0000;
-    border-radius: 0 8px 8px 0;
-    margin-left: -24px;
-    padding-left: 21px;
-}
-
-/* Pro Broadcast Sidebar Box */
-.promo-box {
-    background-color: #F8F9FA;
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
-    padding: 20px;
-    margin-top: 40px;
-}
-.promo-title {
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: #94A3B8;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-}
-.promo-text {
-    font-size: 0.8rem;
-    color: #64748B;
-    margin-bottom: 16px;
-    line-height: 1.4;
-}
-.promo-btn {
-    background-color: #CC0000;
-    color: white !important;
-    text-align: center;
-    display: block;
-    padding: 10px;
-    border-radius: 9999px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-decoration: none !important;
-    transition: background-color 0.2s;
-}
-.promo-btn:hover {
-    background-color: #B30000;
-}
-
-/* Top bar mock */
-.topbar-mock {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
-    padding: 12px 24px;
-    margin-bottom: 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-}
-.search-mock {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: #F8F9FA;
-    border: 1px solid #E5E7EB;
-    border-radius: 9999px;
-    padding: 8px 16px;
-    width: 320px;
-    color: #94A3B8;
-    font-size: 0.85rem;
-}
-.user-profile-mock {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.user-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: #CC0000;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 0.85rem;
-}
-
-/* Main title section */
-.main-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 24px;
-    padding: 0 4px;
-}
-.main-title-text {
-    font-size: 1.8rem !important;
-    font-weight: 700 !important;
-    color: #0F172A !important;
-    margin: 0 !important;
-    letter-spacing: -0.5px;
-}
-.main-sub-text {
-    font-size: 0.85rem;
-    color: #64748B;
-    margin: 4px 0 0 0;
-}
-
-/* KPI cards styling */
-.kpi-card {
-    background-color: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-    transition: transform 0.2s, box-shadow 0.2s;
-    height: 100%;
-}
-.kpi-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-.kpi-top-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-}
-.kpi-icon-badge {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background-color: #FEF2F2;
-    color: #CC0000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-}
-.kpi-badge-green {
-    background-color: #ECFDF5;
-    color: #059669;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 9999px;
-}
-.kpi-badge-red {
-    background-color: #FEF2F2;
-    color: #DC2626;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 9999px;
-}
-.kpi-label-text {
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: #94A3B8;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.kpi-value-text {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #0F172A;
-    margin: 4px 0 0 0;
-}
-
-/* Streamlit Input Override */
-.stTextInput input {
-    background-color: #FFFFFF !important;
-    border: 1px solid #E2E8F0 !important;
-    border-radius: 8px !important;
-    color: #0F172A !important;
-    height: 46px !important;
-    padding: 0 16px !important;
-    font-size: 14px !important;
-    transition: all 0.2s ease !important;
-}
-.stTextInput input:focus {
-    border-color: #CC0000 !important;
-    box-shadow: 0 0 0 3px rgba(204,0,0,0.08) !important;
-}
-
-/* Primary pill button (Export style) */
-.stButton > button {
-    background-color: #0F172A !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    height: 44px !important;
-    border-radius: 9999px !important;
-    font-weight: 600 !important;
-    font-size: 14px !important;
-    letter-spacing: 0.5px !important;
-    padding: 0 32px !important;
-    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15) !important;
-    transition: all 0.2s ease !important;
-}
-.stButton > button:hover {
-    background-color: #1E293B !important;
-    box-shadow: 0 6px 12px rgba(15, 23, 42, 0.25) !important;
-    transform: translateY(-1px);
-}
-.stButton > button:active {
-    transform: translateY(0);
-}
-
-/* Download/Action pill button */
-.stDownloadButton > button {
-    background-color: #CC0000 !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    height: 40px !important;
-    border-radius: 9999px !important;
-    font-weight: 600 !important;
-    font-size: 13px !important;
-    letter-spacing: 0.5px !important;
-    padding: 0 24px !important;
-    box-shadow: 0 2px 4px rgba(204, 0, 0, 0.1) !important;
-    transition: all 0.2s ease !important;
-}
-.stDownloadButton > button:hover {
-    background-color: #B30000 !important;
-    box-shadow: 0 4px 8px rgba(204, 0, 0, 0.2) !important;
-    transform: translateY(-1px);
-}
-
 .sidebar-title {
     font-size: 0.7rem;
     font-weight: 600;
-    color: #94A3B8;
+    color: #818CF8 !important;
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 8px;
@@ -825,8 +545,134 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
 }
 .sidebar-note {
     font-size: 0.82rem;
-    color: #64748B;
+    color: #94A3B8;
     line-height: 1.65;
+}
+
+/* ── Custom CSS Animations & Micro-Interactions ── */
+@keyframes pulse {
+    0% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(99,102,241,0.3)); }
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 16px rgba(99,102,241,0.8)); }
+    100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(99,102,241,0.3)); }
+}
+.pulse-logo {
+    animation: pulse 3s infinite ease-in-out;
+}
+
+@keyframes beacon {
+    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { transform: scale(1.2); opacity: 0.3; box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #10B981;
+    border-radius: 50%;
+    animation: beacon 2s infinite;
+}
+
+/* ── Interactive Hover Lighting ── */
+.nav-link-hover {
+    transition: all 0.3s ease !important;
+}
+.nav-link-hover:hover {
+    color: #818CF8 !important;
+    text-shadow: 0 0 12px rgba(99, 102, 241, 0.8) !important;
+}
+
+.status-container-hover {
+    transition: all 0.3s ease !important;
+}
+.status-container-hover:hover {
+    border-color: #6366F1 !important;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.5) !important;
+}
+
+.pro-btn-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.pro-btn-hover:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ── Textarea styling override ── */
+.stTextArea textarea {
+    background-color: #05050A !important;
+    border: 1px solid #1A1C30 !important;
+    border-radius: 12px !important;
+    color: #FFFFFF !important;
+    padding: 16px !important;
+    font-size: 14px !important;
+    transition: all 0.2s ease !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5) !important;
+}
+.stTextArea textarea:focus {
+    border-color: #6366F1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+/* ── Launch Engine Button styling override ── */
+.stButton > button {
+    background-color: #4F46E5 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    height: 48px !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    letter-spacing: 0.5px !important;
+    padding: 0 32px !important;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4) !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    width: auto !important;
+}
+.stButton > button:hover {
+    background-color: #5850EC !important;
+    box-shadow: 0 0 30px rgba(79, 70, 229, 0.95), 0 0 10px rgba(99, 102, 241, 0.5) !important;
+    transform: translateY(-2px) scale(1.02);
+}
+.stButton > button:active {
+    transform: translateY(0);
+}
+
+/* ── Download/Action pill button ── */
+.stDownloadButton > button {
+    background-color: #6366F1 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    height: 44px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    letter-spacing: 0.5px !important;
+    padding: 0 24px !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2) !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    width: 100% !important;
+}
+.stDownloadButton > button:hover {
+    background-color: #4F46E5 !important;
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.8) !important;
+    transform: translateY(-2px) scale(1.02);
+}
+
+/* ── Extracted Leads Card ── */
+.extracted-leads-card {
+    background-color: transparent;
+}
+
+/* ── Code / Terminal Override ── */
+code, pre {
+    background-color: #05050A !important;
+    border: 1px solid #1A1C30 !important;
+    border-radius: 12px !important;
+    color: #10B981 !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 0.8rem !important;
+    padding: 16px !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -835,14 +681,14 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
 # ── SIDEBAR ──────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("""
-    <div class="brand-container">
-        <div class="brand-logo">⚡</div>
-        <div>
-            <div class="brand-name">GeoScraper Pro</div>
-            <div class="brand-sub">Advanced Google Maps Scraper</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+<div class="brand-container" style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px; padding: 0 8px;">
+<div class="pulse-logo" style="font-size: 1.5rem; color: #6366F1;">⚡</div>
+<div>
+<div class="brand-name" style="color: #FFFFFF; font-weight: 700; font-size: 1.1rem; line-height: 1.15;">GeoScraper</div>
+<div class="brand-sub" style="color: #818CF8; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Advanced Scraper</div>
+</div>
+</div>
+""", unsafe_allow_html=True)
 
     st.markdown("<span class='sidebar-title'>Advanced Settings</span>", unsafe_allow_html=True)
 
@@ -874,133 +720,129 @@ with st.sidebar:
     st.sidebar.divider()
     
     st.markdown("""
-    <div class="promo-box">
-        <div class="promo-title">PRO SCRAPER</div>
-        <div class="promo-text">Upgrade to unlock rotating proxies & high-speed parallel scrapers.</div>
-        <a href="#" class="promo-btn">Upgrade Now</a>
-    </div>
-    """, unsafe_allow_html=True)
-
-
-# ── MAIN CONTENT ─────────────────────────────────────────────
-# 1. Top bar mock
-st.markdown("""
-<div class="topbar-mock">
-    <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 1.3rem;">🌍</span>
-        <span style="font-weight: 700; color: #0F172A; font-size: 1.15rem; letter-spacing: -0.3px;">GeoScraper Pro</span>
-    </div>
-    <div style="display: flex; align-items: center; gap: 20px;">
-        <span style="font-size: 0.8rem; font-weight: 600; color: #059669; background-color: #ECFDF5; padding: 6px 12px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px;">
-            <span style="width: 8px; height: 8px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span> System Online / Proxy Active
-        </span>
-        <a href="https://github.com/Boerhan06/scraper-google-maps#readme" target="_blank" style="font-size: 0.85rem; color: #64748B; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 4px;">
-            <span>❓</span> Docs & Help
-        </a>
-    </div>
+<div class="promo-box" style="background-color: #0B0C16; border: 1px solid #1A1C30; border-radius: 12px; padding: 20px; margin-top: 40px;">
+<div class="promo-title" style="color: #818CF8; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">PRO SCRAPER</div>
+<div class="promo-text" style="color: #94A3B8; font-size: 0.8rem; margin-bottom: 16px; line-height: 1.4;">Upgrade to unlock rotating proxies & high-speed parallel scrapers.</div>
+<a href="#" class="promo-btn" style="background-color: #4F46E5; color: white !important; text-align: center; display: block; padding: 10px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; text-decoration: none !important;">Upgrade Now</a>
 </div>
 """, unsafe_allow_html=True)
 
-# 2. Hero Section (Prolog)
+
+# ── TOP BAR (NAV) ───────────────────────────────────────────
 st.markdown("""
-<div class="main-header-row">
-    <div>
-        <h1 class="main-title-text">Ekstraksi Data Bisnis Google Maps Secara Massal</h1>
-        <p class="main-sub-text">Cari ribuan prospek bisnis lengkap dengan telepon, email, whatsapp, instagram, dan tiktok secara otomatis.</p>
-    </div>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 8px; margin-bottom: 12px;">
+<!-- Logo & Brand -->
+<div style="display: flex; align-items: center; gap: 8px;">
+<span class="pulse-logo" style="font-size: 1.5rem; display: inline-block;">🗺️</span>
+<span style="font-weight: 800; color: #FFFFFF; font-size: 1.3rem; letter-spacing: -0.5px;">GeoScraper</span>
+</div>
+
+<!-- Nav Links (Dashboard Only) -->
+<div style="display: flex; gap: 24px; align-items: center;">
+<div class="nav-link-hover" style="font-size: 0.9rem; font-weight: 600; color: #FFFFFF; position: relative; padding-bottom: 6px; cursor: pointer;">
+Dashboard
+<div style="position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #6366F1, #818CF8); box-shadow: 0 0 8px #6366F1;"></div>
+</div>
+</div>
+
+<!-- Right elements -->
+<div style="display: flex; align-items: center; gap: 16px;">
+<div class="status-container-hover" style="background-color: #0B0C16; border: 1px solid #1A1C30; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s;">
+<span class="status-dot"></span>
+</div>
+<a href="#" class="pro-btn-hover" style="background-color: #FFFFFF; color: #05050A; font-size: 0.85rem; font-weight: 700; padding: 10px 24px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 12px rgba(255,255,255,0.1); transition: all 0.3s; display: inline-block;">
+Pro Access
+</a>
+</div>
 </div>
 """, unsafe_allow_html=True)
 
-# 3. Four KPI metric cards in a row
-col_kpi1, col_kpi2, col_kpi3, col_kpi4 = st.columns(4)
 
-with col_kpi1:
-    leads_placeholder = st.empty()
-    leads_placeholder.markdown("""
-    <div class="kpi-card">
-        <div class="kpi-top-row">
-            <div class="kpi-icon-badge">📁</div>
-            <span class="kpi-badge-green">Ready</span>
-        </div>
-        <div class="kpi-label-text">Total Tempat Ditemukan</div>
-        <div class="kpi-value-text">0</div>
-    </div>
-    """, unsafe_allow_html=True)
+# ── MAIN ROW (COLUMNS) ───────────────────────────────────────
+col_left, col_right = st.columns([2.1, 1.3])
 
-with col_kpi2:
-    wa_placeholder = st.empty()
-    wa_placeholder.markdown("""
-    <div class="kpi-card">
-        <div class="kpi-top-row">
-            <div class="kpi-icon-badge">📞</div>
-            <span class="kpi-badge-green">Ready</span>
-        </div>
-        <div class="kpi-label-text">Nomor WA Didapat</div>
-        <div class="kpi-value-text">0</div>
-    </div>
-    """, unsafe_allow_html=True)
+with col_left:
+    with st.container(border=True):
+        st.markdown("""
+<div style="margin-bottom: 20px;">
+<span style="font-size: 0.65rem; font-weight: 700; color: #818CF8; background-color: #1E1F38; padding: 6px 12px; border-radius: 9999px; letter-spacing: 0.8px; text-transform: uppercase;">EXTRACTION ENGINE</span>
+</div>
+<h1 style="font-size: 3.2rem; font-weight: 800; color: #FFFFFF; line-height: 1.05; margin: 0 0 16px 0; letter-spacing: -1.5px;">Mass Data Extraction<br>Supercharged.</h1>
+<p style="font-size: 0.95rem; color: #94A3B8; line-height: 1.5; margin-bottom: 32px; max-width: 90%;">Automate your lead generation. Extract business names, addresses, and phone numbers directly from Google Maps into CSV format at high speeds.</p>
+""", unsafe_allow_html=True)
 
-with col_kpi3:
-    st.markdown("""
-    <div class="kpi-card">
-        <div class="kpi-top-row">
-            <div class="kpi-icon-badge">⚡</div>
-            <span class="kpi-badge-green">-0.8s</span>
-        </div>
-        <div class="kpi-label-text">AVERAGE EXTRACTION RATE</div>
-        <div class="kpi-value-text">2.4s / site</div>
-    </div>
-    """, unsafe_allow_html=True)
+        search_query = st.text_area(
+            "Keywords",
+            value="Cafe di Purwakarta Kota\nCafe di Babakancikao",
+            placeholder="Masukkan satu kata kunci per baris...",
+            label_visibility="collapsed",
+            height=130
+        )
 
-with col_kpi4:
-    st.markdown("""
-    <div class="kpi-card">
-        <div class="kpi-top-row">
-            <div class="kpi-icon-badge">🎯</div>
-            <span class="kpi-badge-green">+0.5%</span>
-        </div>
-        <div class="kpi-label-text">ENGINE SUCCESS ACCURACY</div>
-        <div class="kpi-value-text">99.2%</div>
-    </div>
-    """, unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 24px;'></div>", unsafe_allow_html=True)
+        start_btn = st.button("▷ Launch Engine")
 
+
+with col_right:
+    # 1. Extracted Leads Card
+    with st.container(border=True):
+        leads_placeholder = st.empty()
+        leads_placeholder.markdown("""
+<div class="extracted-leads-card">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+<div style="font-size: 0.8rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px;">Extracted Leads</div>
+<div style="background-color: #1E1F38; color: #818CF8; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">💼</div>
+</div>
+<div style="font-size: 3.5rem; font-weight: 800; color: #FFFFFF; line-height: 1; margin-bottom: 8px;">0</div>
+<div style="font-size: 0.8rem; font-weight: 600; color: #6366F1;">Total businesses found</div>
+</div>
+""", unsafe_allow_html=True)
+
+    # 2. Live Terminal Card
+    with st.container(border=True):
+        st.markdown("""
+<div style="display: flex; align-items: center; gap: 6px; margin-bottom: 16px;">
+<span style="width: 8px; height: 8px; background-color: #EF4444; border-radius: 50%; display: inline-block;"></span>
+<span style="width: 8px; height: 8px; background-color: #F59E0B; border-radius: 50%; display: inline-block;"></span>
+<span style="width: 8px; height: 8px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span>
+<span style="font-size: 0.65rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.8px; margin-left: 8px;">Live Terminal</span>
+</div>
+""", unsafe_allow_html=True)
+        
+        lottie_placeholder = st.empty()
+        log_placeholder = st.empty()
+        log_placeholder.code("Waiting for engine launch...")
+
+
+# ── EXECUTION & RESULTS ──────────────────────────────────────
 st.markdown("<br>", unsafe_allow_html=True)
-
-# ── TARGET CONFIG SECTION ───────────────────────────────────────────
-with st.container(border=True):
-    st.markdown("<div style='font-size: 1.05rem; font-weight: 700; color: #0F172A; margin-bottom: 4px;'>Konfigurasi Target Pencarian</div>", unsafe_allow_html=True)
-    st.markdown("<div style='font-size: 0.8rem; color: #64748B; margin-bottom: 16px;'>Masukkan satu atau banyak kata kunci pencarian (satu per baris) untuk memulai proses ekstraksi massal.</div>", unsafe_allow_html=True)
-
-    search_query = st.text_area(
-        "Keywords (Satu per baris)",
-        value="Cafe di Purwakarta Kota\nCafe di Babakancikao",
-        placeholder="e.g.\nCafe di Bandung\nHotel di Jakarta\nApotek di Bogor",
-        label_visibility="collapsed",
-        height=120
-    )
-
-    col_btn, col_space = st.columns([1, 3])
-    with col_btn:
-        start_btn = st.button("Mulai Ekstraksi")
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# ── EXECUTION ────────────────────────────────────────────────
-log_container = st.container()
+results_container = st.container()
 
 if start_btn:
     if search_query.strip():
-        # Parse keywords separated by newlines
         keywords = [k.strip() for k in search_query.split("\n") if k.strip()]
 
-        with log_container:
-            with st.container(border=True):
-                st.markdown("<span class='sidebar-title'>Live Console Log</span>", unsafe_allow_html=True)
-                log_placeholder = st.empty()
+        ui_status = UIStatus(log_placeholder, leads_placeholder)
 
-        ui_status = UIStatus(log_placeholder, leads_placeholder, wa_placeholder)
+        # Injeksi Lottie Loader animasi radar jika tersedia
+        lottie_json = None
+        try:
+            import requests
+            res = requests.get("https://lottie.host/8dd0a9c8-dfb8-4dfb-8a8b-fdfc2b1869cc/F6MvXoX5pP.json", timeout=3)
+            if res.status_code == 200:
+                lottie_json = res.json()
+        except Exception:
+            pass
 
-        with st.spinner("Ekstraksi data sedang berjalan — silakan pantau progress..."):
+        try:
+            if lottie_json:
+                from streamlit_lottie import st_lottie
+                with lottie_placeholder:
+                    st_lottie(lottie_json, height=130, key="scraping_radar")
+        except Exception:
+            pass
+
+        with st.spinner("Executing Playwright crawler..."):
             results = run_scraping_process(
                 keywords,
                 max_scroll,
@@ -1014,6 +856,9 @@ if start_btn:
                 extract_reviews=extract_reviews
             )
 
+        # Clear Lottie Loader setelah selesai
+        lottie_placeholder.empty()
+
         if results:
             df = pd.DataFrame(results)
             df = df[df["nama_tempat"] != ""]
@@ -1023,70 +868,64 @@ if start_btn:
             df.drop_duplicates(subset=["tautan_google_maps"], keep="first", inplace=True)
             total_after = len(df)
 
-            st.success(
-                f"Ekstraksi Selesai — {total_after} records unik berhasil dikumpulkan, "
-                f"{total_before - total_after} duplikat dibuang."
-            )
-
-            st.markdown("<br>", unsafe_allow_html=True)
-            
-            with st.container(border=True):
-                st.markdown("<div style='font-size: 1.05rem; font-weight: 700; color: #0F172A; margin-bottom: 12px;'>Data Preview & Export</div>", unsafe_allow_html=True)
-                st.dataframe(df, use_container_width=True)
-
-                OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+            with results_container:
+                st.success(f"Successfully extracted {total_after} unique business records!")
                 
-                # Export files
-                df.to_csv(CSV_OUTPUT_FILE, index=False, encoding="utf-8-sig")
-                df.to_json(JSON_OUTPUT_FILE, orient="records", indent=4, force_ascii=False)
-                
-                try:
-                    import io
-                    # Export excel
-                    excel_buffer = io.BytesIO()
-                    df.to_excel(excel_buffer, index=False, header=True)
-                    excel_buffer.seek(0)
-                    excel_data = excel_buffer.getvalue()
-                except Exception:
-                    excel_data = None
+                with st.container(border=True):
+                    st.markdown("<div style='font-size: 1.05rem; font-weight: 700; color: #FFFFFF; margin-bottom: 12px;'>Data Preview & Export</div>", unsafe_allow_html=True)
+                    st.dataframe(df, use_container_width=True)
 
-                st.markdown("<div style='font-size: 0.8rem; color: #64748B; margin-bottom: 12px;'>Ekspor data ke format pilihan Anda:</div>", unsafe_allow_html=True)
-                col_csv, col_xlsx, col_json = st.columns(3)
-                
-                with col_csv:
-                    csv_bytes = df.to_csv(index=False, encoding="utf-8-sig").encode("utf-8-sig")
-                    st.download_button(
-                        label="Download CSV Data",
-                        data=csv_bytes,
-                        file_name="google_maps_places.csv",
-                        mime="text/csv",
-                        use_container_width=True
-                    )
+                    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
                     
-                with col_xlsx:
-                    if excel_data:
+                    df.to_csv(CSV_OUTPUT_FILE, index=False, encoding="utf-8-sig")
+                    df.to_json(JSON_OUTPUT_FILE, orient="records", indent=4, force_ascii=False)
+                    
+                    try:
+                        import io
+                        excel_buffer = io.BytesIO()
+                        df.to_excel(excel_buffer, index=False, header=True)
+                        excel_buffer.seek(0)
+                        excel_data = excel_buffer.getvalue()
+                    except Exception:
+                        excel_data = None
+
+                    st.markdown("<div style='font-size: 0.85rem; color: #94A3B8; margin-bottom: 16px;'>Export your gathered data to these enterprise formats:</div>", unsafe_allow_html=True)
+                    col_csv, col_xlsx, col_json = st.columns(3)
+                    
+                    with col_csv:
+                        csv_bytes = df.to_csv(index=False, encoding="utf-8-sig").encode("utf-8-sig")
                         st.download_button(
-                            label="Download Excel Data",
-                            data=excel_data,
-                            file_name="google_maps_places.xlsx",
-                            mime="application/vnd.ms-excel",
+                            label="Download CSV",
+                            data=csv_bytes,
+                            file_name="google_maps_places.csv",
+                            mime="text/csv",
                             use_container_width=True
                         )
-                    else:
-                        st.button("Excel Export Disabled (Install openpyxl)", disabled=True, use_container_width=True)
                         
-                with col_json:
-                    json_str = df.to_json(orient="records", indent=4, force_ascii=False)
-                    st.download_button(
-                        label="Download JSON Data",
-                        data=json_str,
-                        file_name="google_maps_places.json",
-                        mime="application/json",
-                        use_container_width=True
-                    )
+                    with col_xlsx:
+                        if excel_data:
+                            st.download_button(
+                                label="Download Excel",
+                                data=excel_data,
+                                file_name="google_maps_places.xlsx",
+                                mime="application/vnd.ms-excel",
+                                use_container_width=True
+                            )
+                        else:
+                            st.button("Excel Export Disabled", disabled=True, use_container_width=True)
+                            
+                    with col_json:
+                        json_str = df.to_json(orient="records", indent=4, force_ascii=False)
+                        st.download_button(
+                            label="Download JSON",
+                            data=json_str,
+                            file_name="google_maps_places.json",
+                            mime="application/json",
+                            use_container_width=True
+                        )
         else:
-            st.error("Ekstraksi tidak mengembalikan hasil. Silakan periksa kembali kata kunci pencarian Anda.")
+            st.error("No results returned. Try adjusting your query or delays.")
     else:
-        st.warning("Harap masukkan setidaknya satu kata kunci untuk memulai.")
+        st.warning("Please enter at least one keyword.")
 
 
