@@ -1,38 +1,40 @@
-# 🗺️ Premium Google Maps Scraper CLI
+# 🗺️ Premium Google Maps Scraper - Web App Edition
 
-Selamat datang di **Google Maps Scraper - Premium CLI Edition**! Script ini adalah *automated web scraper* berbasis Python dan Playwright yang dirancang dengan antarmuka terminal (CLI) yang super interaktif, rapi, dan modern.
+Selamat datang di **Google Maps Scraper - Premium Web App Edition**! Aplikasi ini adalah *automated web scraper* berkinerja tinggi berbasis Python, Playwright, dan Streamlit yang dirancang dengan antarmuka web (UI) modern, interaktif, dan estetik.
 
-Bayangkan Anda memiliki asisten robot premium yang akan mengumpulkan data bisnis di Google Maps secara otomatis, lengkap dengan navigasi yang cerdas, visual terminal yang memukau, dan output instan! 🚀
+Kini Anda dapat mengumpulkan ribuan data prospek bisnis dari Google Maps secara massal langsung melalui web browser, lengkap dengan penemu kontak otomatis (**WhatsApp, Instagram, TikTok**) dari website resmi target! 🚀
 
 ---
 
-## 🎨 Fitur Utama & Keunggulan Visual
+## 🎨 Fitur Utama & Keunggulan Premium
 
-* 💬 **Interactive Terminal Prompt**: Tidak perlu lagi mengubah kata kunci secara manual di dalam kode! Cukup jalankan script, dan program akan menyapa serta meminta apa yang ingin bos cari secara interaktif.
-* 🔠 **Dynamic 5x5 ASCII Font Engine**: Kata kunci pencarian utama (seperti `HOTEL`, `CAFE`, `SALON`, dll.) akan secara otomatis digambar menjadi huruf blok raksasa neon di terminal Anda.
-* 🌈 **ANSI Neon Color Palette**: Dilengkapi dengan ornamen pembatas ganda artistik, penanda proses berwarna neon, dan emoji interaktif untuk memantau proses scraping dengan nyaman.
-* 🎴 **Styled Data Cards**: Menampilkan hasil ekstraksi data secara real-time di terminal dalam bentuk kartu informasi terstruktur dengan rating bintang (`⭐`), ulasan, kategori, alamat, telepon, dan jam buka.
-* 🛡️ **Resilient Anti-Detachment**: Dibangun menggunakan kombinasi selector cerdas dan simulasi penekanan tombol keyboard global guna menghindari error element lepas (*detachment*) akibat pembaruan dinamis Google Maps.
-* 📊 **Double Output Format**: Otomatis menyimpan hasil ke dalam folder `output/` dalam dua format sekaligus:
-  * **CSV** (Rapi & siap dibuka di Excel)
-  * **JSON** (Tersusun rapi untuk developer / pengolahan data lanjutan)
+* 🌐 **Sleek Web Interface (Streamlit UI)**: Antarmuka berbasis web yang indah, responsif, dan mudah digunakan oleh siapa saja tanpa perlu menyentuh kode pemrograman.
+* 🔑 **Multi-Location Search**: Masukkan beberapa kata kunci pencarian sekaligus dipisahkan dengan tanda koma (koma). Program akan memprosesnya secara otomatis satu per satu. *(Contoh: `Cafe di Purwakarta Kota, Cafe di Babakancikao`)*.
+* 📡 **Live Console Log**: Logger real-time interaktif langsung di halaman web, menampilkan langkah demi langkah yang sedang dikerjakan robot scraper di latar belakang.
+* 🔗 **Auto-Social Media & WhatsApp Finder**: Jika bisnis memiliki website resmi, bot akan mengunjungi website tersebut secara instan selama **maksimal 3 detik** (`timeout=3`) untuk menyedot link **Instagram**, **TikTok**, dan nomor chat **WhatsApp** (`wa.me`) target menggunakan Regex canggih!
+* ⚡ **Ultra-Fast & Bandwidth Saving**:
+  * **Scroll-First Gathering**: Bot mengumpulkan semua tautan detail tempat di panel kiri terlebih dahulu sebelum mengunjungi isinya satu per satu.
+  * **Resource Blocking**: Memblokir seluruh aset berat seperti ubin gambar (`image`), file video (`media`), dan file huruf (`font`) saat membuka detail, menghemat bandwidth hingga 70% dan mempercepat pemuatan halaman detail hingga 3x lipat!
+  * **Dynamic Waiting**: Bot tidak menggunakan jeda statis. Begitu judul tempat (`h1`) muncul di layar, data langsung disedot secara instan.
+* 🧹 **Auto-Deduplication**: Hasil data yang digabungkan dari berbagai kata kunci akan dibersihkan secara otomatis dari data duplikat (berdasarkan nama dan link Google Maps) menggunakan Pandas.
+* 📥 **One-Click Download**: Hasil akhir langsung tersaji dalam bentuk tabel interaktif (`st.dataframe`) dan dapat diunduh instan dalam format **CSV** sekali klik.
 
 ---
 
 ## ⚡ Cara Cepat Menjalankan (Shortcut `run`)
 
-Sekarang bos tidak perlu lagi mengetik perintah panjang `python scraper_google_maps.py`. Cukup buka terminal (PowerShell atau Command Prompt) di folder project ini, lalu ketik:
+Buka terminal (PowerShell atau Command Prompt) di folder project ini, lalu ketik shortcut super mudah:
 
 ```powershell
 .\run
 ```
-*(Atau cukup ketik `run` jika menggunakan Command Prompt standard)*. Perintah ini akan otomatis memanggil script utama bos!
+*(Atau cukup ketik `run` jika menggunakan Command Prompt standard)*. Perintah ini akan otomatis memanggil server Streamlit dan membuka aplikasi web di browser Anda secara otomatis!
 
 ---
 
 ## 🛠️ Panduan Instalasi (Sekali Setup)
 
-Sebelum menjalankan shortcut `run`, pastikan komputer bos sudah disiapkan dengan langkah mudah berikut:
+Sebelum menjalankan shortcut `run`, pastikan komputer Anda telah disiapkan dengan langkah mudah berikut:
 
 ### Step 1️⃣: Install Python (Jika belum punya)
 * Download Python 3.8+ di [python.org/downloads](https://www.python.org/downloads/).
@@ -45,46 +47,39 @@ pip install -r requirements.txt
 ```
 
 ### Step 3️⃣: Pasang Browser Otomatis (Playwright Chromium)
-Jalankan perintah ini sekali untuk mengunduh browser khusus yang akan digunakan program untuk scraping:
+Jalankan perintah ini sekali untuk mengunduh browser khusus yang akan digunakan program di latar belakang (headless):
 ```powershell
 python -m playwright install chromium
 ```
 
 ---
 
-## 📊 Hasil Output yang Dihasilkan
+## 📊 Hasil Ekstraksi Data yang Dikumpulkan
 
-Setelah proses scraping selesai, data akan otomatis disimpan secara rapi di direktori:
-```text
-output/
-├── google_maps_places.csv      # Format tabel (buka langsung di Excel)
-└── google_maps_places.json     # Format JSON terstruktur
-```
-
-Setiap data tempat yang dikumpulkan meliputi:
+Setiap data tempat yang berhasil dikumpulkan meliputi:
 * **Nama Tempat** (Nama bisnis)
 * **Rating & Jumlah Ulasan** (⭐ 4.5 / 1,200 ulasan)
-* **Kategori Bisnis** (Cafe, Hotel, Restoran, dll.)
+* **Kategori Bisnis** (Cafe, Hotel, Restoran, Kantor, dll.)
 * **Alamat Lengkap**
 * **Nomor Telepon** (Format internasional)
 * **Jam Operasional**
+* **Website Resmi**
+* **Link Instagram** (Hasil scan otomatis dari website)
+* **Link TikTok** (Hasil scan otomatis dari website)
+* **Link WhatsApp / wa.me** (Hasil scan otomatis dari website)
 * **Tautan Menu** (Jika tersedia)
-* **URL Google Maps** (Tautan langsung ke tempat tersebut)
+* **Tautan Google Maps**
 
 ---
 
-## ⚙️ Kustomisasi Tambahan
+## ⚙️ Kustomisasi Sidebar Aplikasi Web
 
-Bila ingin mengatur batas kecepatan atau kedalaman pencarian, bos bisa mengubah variabel di bagian atas file `scraper_google_maps.py`:
-
-| Parameter | Deskripsi | Bawaan |
-|-----------|-----------|---------|
-| `SCROLL_PAUSE_MS` | Jeda waktu (milidetik) setelah melakukan scroll halaman untuk menunggu data baru. | `1500` |
-| `MAX_SCROLL_ATTEMPTS` | Batas maksimum pengguliran halaman (safety limit). | `100` |
-| `MAX_IDLE_SCROLLS` | Berapa kali scroll kosong berturut-turut tanpa hasil baru sebelum scraping dianggap selesai. | `3` |
+Melalui sidebar panel pengaturan pada aplikasi web, Anda dapat menyesuaikan:
+* **Batas Maksimal Scroll**: Mengatur seberapa dalam pencarian hasil di panel Google Maps (Safety Limit).
+* **Batas Idle (Scroll Kosong)**: Berapa kali scroll tanpa hasil baru berturut-turut sebelum menghentikan pencarian dan lanjut ke ekstraksi detail.
 
 ---
 
 ## ⚠️ Catatan Penting
-* Jangan menutup browser Chromium yang terbuka secara otomatis selama proses scraping berjalan. Biarkan program bekerja hingga muncul pesan sukses di terminal.
-* Pastikan koneksi internet stabil agar pemuatan peta dan detail bisnis berjalan dengan lancar tanpa kendala timeout.
+* Proses browser Playwright berjalan sepenuhnya di latar belakang (**Headless = True**), sehingga tidak akan ada browser kosong yang mengganggu layar komputer Anda saat Anda sedang bekerja.
+* Pastikan koneksi internet Anda lancar agar pemuatan halaman maps dan scanning website eksternal berjalan maksimal tanpa kendala timeout.
