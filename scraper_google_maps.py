@@ -357,10 +357,19 @@ def main() -> None:
 
         page.goto("https://www.google.com/maps", wait_until="domcontentloaded")
 
-        search_box = page.locator("input#searchboxinput")
-        search_box.wait_for(state="visible", timeout=30000)
+        # Coba beberapa selector kotak pencarian yang umum
+        search_box = page.locator("input#searchboxinput, input.UGojuc, input[role='combobox']").first
+        try:
+            search_box.wait_for(state="visible", timeout=15000)
+            print("Kotak pencarian Google Maps ditemukan.")
+        except PlaywrightTimeoutError:
+            print("Gagal menemukan kotak pencarian standar. Mencoba selector fallback...")
+            search_box = page.locator("input").first
+            search_box.wait_for(state="visible", timeout=15000)
+
         search_box.fill(SEARCH_KEYWORD)
-        search_box.press("Enter")
+        page.wait_for_timeout(1000)   # Tunggu sebentar setelah mengetik agar stabil
+        page.keyboard.press("Enter")   # Kirim tombol Enter secara global untuk menghindari element detachment
 
         results_panel = page.locator('div[role="feed"]')
 
