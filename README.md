@@ -1,164 +1,90 @@
-# 🗺️ Google Maps Scraper dengan Playwright
+# 🗺️ Premium Google Maps Scraper CLI
 
-## 📌 Apa Itu Program Ini?
+Selamat datang di **Google Maps Scraper - Premium CLI Edition**! Script ini adalah *automated web scraper* berbasis Python dan Playwright yang dirancang dengan antarmuka terminal (CLI) yang super interaktif, rapi, dan modern.
 
-Program ini adalah **web scraper otomatis** yang menggunakan Playwright untuk mengekstrak data bisnis dari Google Maps. Bayangkan Anda memiliki asisten yang:
-
-1. **Membuka Google Maps** secara otomatis
-2. **Mencari tempat tertentu** (misalnya: "Cafe di Purwakarta")
-3. **Mengumpulkan semua hasil** dengan menggulir dan menunggu data dimuat
-4. **Mengekstrak informasi detail** dari setiap tempat seperti nama, rating, jam operasional, alamat, dan nomor telepon
-5. **Menyimpan hasilnya** dalam format CSV dan JSON yang siap digunakan
-
-Ini sangat berguna untuk **riset pasar, analisis kompetitor, atau membangun database bisnis lokal** tanpa harus mengetik satu per satu! 🚀
+Bayangkan Anda memiliki asisten robot premium yang akan mengumpulkan data bisnis di Google Maps secara otomatis, lengkap dengan navigasi yang cerdas, visual terminal yang memukau, dan output instan! 🚀
 
 ---
 
-## 🎯 Fitur Utama
+## 🎨 Fitur Utama & Keunggulan Visual
 
-- ✅ **Otomatis mengumpulkan data** dari hasil pencarian Google Maps
-- ✅ **Smart scrolling** - terus menggulir hingga semua hasil termuat
-- ✅ **Ekstraksi data lengkap:**
-  - Nama tempat
-  - Rating dan jumlah ulasan
-  - Kategori/jenis bisnis
-  - Alamat lengkap
-  - Jam operasional
-  - Nomor telepon
-  - Link menu (jika ada)
-  - URL Google Maps
-
-- ✅ **Export ke 2 format:**
-  - CSV (mudah dibuka di Excel)
-  - JSON (mudah untuk processing data)
-
-- ✅ **Error handling** - data yang tidak ditemukan tidak akan membuat program crash
+* 💬 **Interactive Terminal Prompt**: Tidak perlu lagi mengubah kata kunci secara manual di dalam kode! Cukup jalankan script, dan program akan menyapa serta meminta apa yang ingin bos cari secara interaktif.
+* 🔠 **Dynamic 5x5 ASCII Font Engine**: Kata kunci pencarian utama (seperti `HOTEL`, `CAFE`, `SALON`, dll.) akan secara otomatis digambar menjadi huruf blok raksasa neon di terminal Anda.
+* 🌈 **ANSI Neon Color Palette**: Dilengkapi dengan ornamen pembatas ganda artistik, penanda proses berwarna neon, dan emoji interaktif untuk memantau proses scraping dengan nyaman.
+* 🎴 **Styled Data Cards**: Menampilkan hasil ekstraksi data secara real-time di terminal dalam bentuk kartu informasi terstruktur dengan rating bintang (`⭐`), ulasan, kategori, alamat, telepon, dan jam buka.
+* 🛡️ **Resilient Anti-Detachment**: Dibangun menggunakan kombinasi selector cerdas dan simulasi penekanan tombol keyboard global guna menghindari error element lepas (*detachment*) akibat pembaruan dinamis Google Maps.
+* 📊 **Double Output Format**: Otomatis menyimpan hasil ke dalam folder `output/` dalam dua format sekaligus:
+  * **CSV** (Rapi & siap dibuka di Excel)
+  * **JSON** (Tersusun rapi untuk developer / pengolahan data lanjutan)
 
 ---
 
-## 🚀 Cara Menjalankan
+## ⚡ Cara Cepat Menjalankan (Shortcut `run`)
 
-### Step 1️⃣: Siapkan Environment
+Sekarang bos tidak perlu lagi mengetik perintah panjang `python scraper_google_maps.py`. Cukup buka terminal (PowerShell atau Command Prompt) di folder project ini, lalu ketik:
 
-Buka PowerShell atau Command Prompt di folder project ini, lalu jalankan:
+```powershell
+.\run
+```
+*(Atau cukup ketik `run` jika menggunakan Command Prompt standard)*. Perintah ini akan otomatis memanggil script utama bos!
 
+---
+
+## 🛠️ Panduan Instalasi (Sekali Setup)
+
+Sebelum menjalankan shortcut `run`, pastikan komputer bos sudah disiapkan dengan langkah mudah berikut:
+
+### Step 1️⃣: Install Python (Jika belum punya)
+* Download Python 3.8+ di [python.org/downloads](https://www.python.org/downloads/).
+* **PENTING:** Saat menginstal di Windows, pastikan **centang kotak "Add python.exe to PATH"** sebelum mengklik *Install Now*.
+
+### Step 2️⃣: Pasang Library Pendukung
+Buka PowerShell/Terminal di folder ini, lalu jalankan:
 ```powershell
 pip install -r requirements.txt
 ```
 
-Ini akan menginstall library yang dibutuhkan:
-- **Playwright** - untuk browser automation
-- **Pandas** - untuk export data ke CSV/JSON
-
-### Step 2️⃣: Install Chromium Browser
-
-Playwright perlu browser untuk bekerja:
-
+### Step 3️⃣: Pasang Browser Otomatis (Playwright Chromium)
+Jalankan perintah ini sekali untuk mengunduh browser khusus yang akan digunakan program untuk scraping:
 ```powershell
 python -m playwright install chromium
 ```
 
-### Step 3️⃣: Jalankan Script
-
-```powershell
-python scraper_google_maps.py
-```
-
-Script akan:
-1. Membuka browser Chromium
-2. Masuk ke Google Maps
-3. Mencari "Cafe di Purwakarta" (bisa diubah)
-4. Menampilkan progress di console
-5. Simpan hasil ke folder `output/`
-
 ---
 
-## 📊 Output yang Dihasilkan
+## 📊 Hasil Output yang Dihasilkan
 
-Setelah script selesai, Anda akan dapat 2 file:
-
-```
+Setelah proses scraping selesai, data akan otomatis disimpan secara rapi di direktori:
+```text
 output/
-├── google_maps_places.csv      # Format tabel (buka di Excel)
-└── google_maps_places.json     # Format JSON (untuk developer)
+├── google_maps_places.csv      # Format tabel (buka langsung di Excel)
+└── google_maps_places.json     # Format JSON terstruktur
 ```
 
-Contoh struktur data:
-```json
-{
-  "nama_tempat": "Kopi Kita",
-  "rating": "4.5",
-  "jumlah_ulasan": "120",
-  "kategori": "Cafe",
-  "alamat_lengkap": "Jl. Merdeka No.45, Purwakarta",
-  "jam_operasional": "08:00 - 22:00",
-  "nomor_telepon": "+62-274-1234567",
-  "menu": "https://...",
-  "tautan_google_maps": "https://maps.google.com/..."
-}
-```
+Setiap data tempat yang dikumpulkan meliputi:
+* **Nama Tempat** (Nama bisnis)
+* **Rating & Jumlah Ulasan** (⭐ 4.5 / 1,200 ulasan)
+* **Kategori Bisnis** (Cafe, Hotel, Restoran, dll.)
+* **Alamat Lengkap**
+* **Nomor Telepon** (Format internasional)
+* **Jam Operasional**
+* **Tautan Menu** (Jika tersedia)
+* **URL Google Maps** (Tautan langsung ke tempat tersebut)
 
 ---
 
-## ⚙️ Kustomisasi
+## ⚙️ Kustomisasi Tambahan
 
-### Mengubah Kata Kunci Pencarian
+Bila ingin mengatur batas kecepatan atau kedalaman pencarian, bos bisa mengubah variabel di bagian atas file `scraper_google_maps.py`:
 
-Edit file `scraper_google_maps.py` dan cari baris ini:
-
-```python
-SEARCH_KEYWORD = "Cafe di Purwakarta"
-```
-
-Ubah menjadi apa yang Anda inginkan:
-
-```python
-SEARCH_KEYWORD = "Restaurant di Jakarta"
-# atau
-SEARCH_KEYWORD = "Salon kecantikan di Bandung"
-```
-
-### Mengatur Kecepatan & Batas Scroll
-
-Di file `scraper_google_maps.py`, Anda bisa ubah parameter ini:
-
-| Parameter | Deskripsi | Default |
+| Parameter | Deskripsi | Bawaan |
 |-----------|-----------|---------|
-| `SCROLL_PAUSE_MS` | Waktu tunggu (ms) setelah setiap scroll (untuk hasil baru dimuat) | 1500 |
-| `MAX_SCROLL_ATTEMPTS` | Batas maksimal jumlah scroll (safety limit) | 100 |
-| `MAX_IDLE_SCROLLS` | Berapa kali scroll tanpa hasil baru sebelum berhenti | 3 |
-
-**Contoh:** Jika ingin lebih cepat, kurangi `SCROLL_PAUSE_MS` menjadi 1000. Untuk hasil lebih lengkap, naikkan `MAX_SCROLL_ATTEMPTS` menjadi 150.
-
-```python
-SCROLL_PAUSE_MS = 1000          # Lebih cepat
-MAX_SCROLL_ATTEMPTS = 150       # Scroll lebih banyak
-MAX_IDLE_SCROLLS = 5            # Lebih teliti sebelum berhenti
-```
-
----
-
-## 📋 Requirements
-
-- **Python 3.8+**
-- **Playwright** - untuk browser automation
-- **Pandas** - untuk export data
-- **Windows/Mac/Linux** - kompatibel semua OS
-
----
-
-## 💡 Tips & Trik
-
-1. **Mempercepat proses:** Kurangi `SCROLL_PAUSE_MS` jika Google Maps sudah responsif
-2. **Mendapat hasil lebih banyak:** Naikkan `MAX_SCROLL_ATTEMPTS` sampai 200+
-3. **Hemat data:** Jalankan di waktu yang tepat, karena setiap scroll butuh koneksi internet
-4. **Backup data:** Simpan CSV/JSON yang sudah di-generate, jangan langsung dihapus
+| `SCROLL_PAUSE_MS` | Jeda waktu (milidetik) setelah melakukan scroll halaman untuk menunggu data baru. | `1500` |
+| `MAX_SCROLL_ATTEMPTS` | Batas maksimum pengguliran halaman (safety limit). | `100` |
+| `MAX_IDLE_SCROLLS` | Berapa kali scroll kosong berturut-turut tanpa hasil baru sebelum scraping dianggap selesai. | `3` |
 
 ---
 
 ## ⚠️ Catatan Penting
-
-- Script ini menggunakan browser automation yang **tidak headless** (terlihat), jadi Anda bisa melihat prosesnya
-- Pastikan **koneksi internet stabil** saat menjalankan
-- Jangan tutup browser secara paksa, biarkan script menyelesaikan prosesnya
-- Beberapa data mungkin kosong jika bisnis tidak memiliki informasi lengkap di Google Maps
+* Jangan menutup browser Chromium yang terbuka secara otomatis selama proses scraping berjalan. Biarkan program bekerja hingga muncul pesan sukses di terminal.
+* Pastikan koneksi internet stabil agar pemuatan peta dan detail bisnis berjalan dengan lancar tanpa kendala timeout.
